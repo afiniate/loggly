@@ -12,7 +12,7 @@ let msg_to_iso8601_string msg =
   Time.format (Log.Message.time msg) "%Y-%m-%dT%H:%M:%SZ"
 
 let body_of_msg msg =
-  Flume_entry.string_of_t
+  Flume_entry_j.string_of_t
   @@ (("timestamp", msg_to_iso8601_string msg)::
         ("message", String.strip @@ Log.Message.message msg)::
           (Log.Message.tags msg))
