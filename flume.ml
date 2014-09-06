@@ -14,8 +14,8 @@ let msg_to_iso8601_string msg =
 let body_of_msg msg =
   Flume_entry_j.string_of_t
   @@ (("timestamp", msg_to_iso8601_string msg)::
-        ("message", String.strip @@ Log.Message.message msg)::
-          (Log.Message.tags msg))
+      ("message", String.strip @@ Log.Message.message msg)::
+      (Log.Message.tags msg))
 
 let process_tags base =
   List.fold ~init:base ~f:(fun acc el -> acc ^ el ^ ",")
@@ -29,18 +29,18 @@ let publish_log_message headers body url =
   match response.status with
   | `OK -> return ()
   | _ ->
-     Cohttp_async.Body.to_string body
-     >>= fun str_body ->
-     print_string
-     @@ Sexp.to_string
-     @@ Sexp.List [Sexp.Atom str_body;
-                   Cohttp_async.Response.sexp_of_t response];
-     return ()
+    Cohttp_async.Body.to_string body
+    >>= fun str_body ->
+    print_string
+    @@ Sexp.to_string
+    @@ Sexp.List [Sexp.Atom str_body;
+                  Cohttp_async.Response.sexp_of_t response];
+    return ()
 
-let syslog_messages sys tags msgs: unit Async_extra.Import.Deferred.t =
+let syslog_messages sys tags msgs =
   let str_body = Queue.fold ~init:"" ~f:(fun acc msg ->
-                                         let str = body_of_msg msg in
-                                         acc ^ str ^ "\n") msgs in
+      let str = body_of_msg msg in
+      acc ^ str ^ "\n") msgs in
   let headers = Cohttp.Header.of_list [("content-type", "application/json")] in
   let body = Cohttp_async.Body.of_string str_body in
   let url = construct_bulk_url sys tags in
@@ -48,10 +48,10 @@ let syslog_messages sys tags msgs: unit Async_extra.Import.Deferred.t =
   return ()
 
 let create_log ?url
-               ?level:(level=`Info)
-               ?tags:(tags=[])
-               (app_name:String.t)
-               token =
+    ?level:(level=`Info)
+    ?tags:(tags=[])
+    (app_name:String.t)
+    token =
   let root_url = match url with
     | Some tmp_root -> tmp_root
     | None -> base_url in
