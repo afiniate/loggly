@@ -1,6 +1,6 @@
-true: syntax(camlp4o)
-<*.atd>: std_json
+".git": -traverse
+".git": not_hygienic
 
-<*>: thread, package(core), package(async), package(async_unix)
-<*>: package(threads), package(cohttp), package(cohttp.async)
-<*>: package(atdgen), package(sexplib.syntax), package(sexplib)
+true: warn_error_A, warn(-40)
+
+<src>: include

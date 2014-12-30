@@ -12,7 +12,7 @@ let msg_to_iso8601_string msg =
   Time.format (Log.Message.time msg) "%Y-%m-%dT%H:%M:%SZ"
 
 let body_of_msg msg =
-  Flume_entry_j.string_of_t
+  Loggly_entry_j.string_of_t
   @@ (("timestamp", msg_to_iso8601_string msg)::
       ("message", String.strip @@ Log.Message.message msg)::
       (Log.Message.tags msg))
@@ -50,7 +50,7 @@ let syslog_messages sys tags msgs =
 let create_log ?url
     ?level:(level=`Info)
     ?tags:(tags=[])
-    (app_name:String.t)
+    app_name
     token =
   let root_url = match url with
     | Some tmp_root -> tmp_root
